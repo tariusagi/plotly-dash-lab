@@ -47,6 +47,8 @@ def on_timeframe(n_clicks):
 	srcdf = pd.read_json(data_path)
 	sr = srcdf.groupby('DateTime').Close.last()
 	ohlc = sr.resample(tf).agg({'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last'})
+	# NOTE: NaNs messes up candlesticks, let's remove them.
+	ohlc.dropna(inplace=True)
 	# Create a figure with a candlestick chart using the above OHLCD data.
 	fig = go.Figure(layout=dict(width=800, height=600, uirevision=uirevision))
 	fig.add_trace(go.Candlestick(x=ohlc.index, open=ohlc.Open, high=ohlc.High, low=ohlc.Low, close=ohlc.Close))
